@@ -8,9 +8,9 @@
     "build": "tsc --project tsconfig.json"
   },
   "dependencies": {
-    "@threshold-usd/lib-base": "0.0.0-semantic-release",
-    "@threshold-usd/lib-ethers": "0.0.0-semantic-release",
-    "@threshold-usd/providers": "0.0.0-semantic-release",
+    "@threshold-usd/lib-base": "3.0.0",
+    "@threshold-usd/lib-ethers": "3.4.0",
+    "@threshold-usd/providers": "1.0.1",
     "ethers": "5.6.1",
     "express": "4.17.3",
     "ws": "8.5.0"
