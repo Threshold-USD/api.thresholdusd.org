@@ -1,8 +1,7 @@
-import { BlockTag } from "@ethersproject/abstract-provider";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract, CallOverrides } from "@ethersproject/contracts";
-import { Decimal } from "@liquity/lib-base";
-import { EthersLiquity } from "@liquity/lib-ethers";
+import { Decimal } from "@threshold-usd/lib-base";
+import { EthersLiquity as EthersThresholdUsd } from "@threshold-usd/lib-ethers";
 
 const erc20TotalSupplyAbi = ["function totalSupply() view returns (uint256)"];
 
@@ -10,17 +9,14 @@ interface ERC20TotalSupply {
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 }
 
-const lusdTokenFrom = (liquity: EthersLiquity) =>
+const thusdTokenFrom = (thresholdUsd: EthersThresholdUsd): ERC20TotalSupply =>
   new Contract(
-    liquity.connection.addresses["lusdToken"],
+    thresholdUsd.connection.addresses["thusdToken"],
     erc20TotalSupplyAbi,
-    liquity.connection.provider
+    thresholdUsd.connection.provider
   ) as unknown as ERC20TotalSupply;
 
-export const fetchLUSDTotalSupply = (
-  liquity: EthersLiquity,
-  blockTag?: BlockTag
-): Promise<Decimal> =>
-  lusdTokenFrom(liquity)
+export const fetchTHUSDTotalSupply = (thresholdUsd: EthersThresholdUsd, blockTag?: number): Promise<Decimal> =>
+  thusdTokenFrom(thresholdUsd)
     .totalSupply({ blockTag })
     .then(bigNumber => Decimal.fromBigNumberString(bigNumber.toHexString()));

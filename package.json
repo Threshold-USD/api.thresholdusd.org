@@ -1,30 +1,29 @@
 {
-  "name": "@liquity/lqty-circulating-supply",
+  "name": "@threshold-usd/lqty-circulating-supply",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
   "scripts": {
-    "start": "ts-node-esm src/index.ts",
-    "once": "ts-node-esm src/once.ts",
+    "start": "ts-node src/index.ts",
+    "once": "ts-node src/once.ts",
     "build": "tsc --project tsconfig.json"
   },
   "dependencies": {
-    "@liquity/lib-base": "3.0.0",
-    "@liquity/lib-ethers": "3.4.0",
-    "@liquity/providers": "1.0.1",
-    "ethers": "5.7.2",
-    "express": "4.18.2",
-    "node-fetch": "^3.3.2",
-    "ws": "8.14.2"
+    "@threshold-usd/lib-base": "0.0.0-semantic-release",
+    "@threshold-usd/lib-ethers": "0.0.0-semantic-release",
+    "@threshold-usd/providers": "0.0.0-semantic-release",
+    "ethers": "5.6.1",
+    "express": "4.17.3",
+    "ws": "8.5.0"
   },
   "devDependencies": {
-    "@types/express": "4.17.21",
-    "@types/node": "20.9.0",
-    "@types/ws": "8.5.9",
-    "@typescript-eslint/eslint-plugin": "5.62.0",
-    "@typescript-eslint/parser": "5.62.0",
-    "eslint": "8.53.0",
-    "ts-node": "10.9.1",
-    "typescript": "5.2.2"
+    "@types/express": "4.17.13",
+    "@types/node": "17.0.23",
+    "@types/ws": "8.5.3",
+    "@typescript-eslint/eslint-plugin": "5.16.0",
+    "@typescript-eslint/parser": "5.16.0",
+    "dotenv": "^16.3.1",
+    "eslint": "8.11.0",
+    "ts-node": "10.7.0",
+    "typescript": "4.6.3"
   }
 }

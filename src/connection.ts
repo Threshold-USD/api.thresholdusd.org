@@ -1,31 +1,57 @@
-import { AlchemyProvider } from "@ethersproject/providers";
-import { Networkish, getNetwork } from "@ethersproject/networks";
-import { EthersLiquity } from "@liquity/lib-ethers";
-import { Batched, WebSocketAugmented } from "@liquity/providers";
+import { CollateralsVersionedDeployments, EthersLiquity, EthersLiquityConnection, EthersProvider, _connectByChainId, getCollateralsDeployments } from "@threshold-usd/lib-ethers";
 
-const BatchedWebSocketAugmentedAlchemyProvider = Batched(WebSocketAugmented(AlchemyProvider));
+type SupportedNetworks = {
+  [key: string]: "homestead" | "goerli" | "sepolia";
+};
 
-export interface LiquityConnectionOptions {
-  alchemyApiKey?: string;
-  useWebSocket?: boolean;
+export const supportedNetworks: SupportedNetworks = { 1: "homestead", 5: "goerli", 11155111: "sepolia"};
+
+function iterateVersions(collaterals: CollateralsVersionedDeployments) {
+  const result = [];
+
+  for (const collateral in collaterals) {
+    if (collaterals[collateral]) {
+      const versions = collaterals[collateral];
+
+      for (const version in versions) {
+        if (versions[version]) {
+          const versionObj = {
+            collateral: collateral,
+            version: version,
+            deployment: versions[version]
+          };
+          result.push(versionObj);
+        }
+      }
+    }
+  }
+  return result;
 }
 
-export const connectToLiquity = (
-  networkish: Networkish,
-  options?: LiquityConnectionOptions
-): Promise<EthersLiquity> => {
-  const network = getNetwork(networkish);
-  const provider = new BatchedWebSocketAugmentedAlchemyProvider(network, options?.alchemyApiKey);
-  const liquity = EthersLiquity.connect(provider);
+const getCollateralVersions = async (chainId: number): Promise<CollateralsVersionedDeployments> => {
+  const network = supportedNetworks[chainId];
+  return await getCollateralsDeployments(network === "homestead" ? "mainnet" : network);
+}
 
-  provider.chainId = network.chainId;
+export async function connectToThresholdUsd(
+  provider: EthersProvider, 
+  chainId: number
+) {
+  const collaterals = await getCollateralVersions(chainId)
+  const versionsArray = iterateVersions(collaterals);
 
-  if (options?.useWebSocket) {
-    provider.openWebSocket(
-      provider.connection.url.replace(/^http/i, "ws").replace(".alchemyapi.", ".ws.alchemyapi."),
-      network
-    );
-  }
-
-  return liquity;
-};
+  const connectionsByChainId: (EthersLiquityConnection & { useStore: "blockPolled"; })[] = versionsArray.map(version => 
+    _connectByChainId(
+      version.collateral,
+      version.version, 
+      version.deployment, 
+      provider, 
+      undefined, 
+      chainId, 
+      { useStore: "blockPolled" }
+    )
+  )
+  const ethersThresholdFromConnection = EthersLiquity._from(connectionsByChainId[0]);
+  ethersThresholdFromConnection.store.logging = true;
+  return ethersThresholdFromConnection
+}

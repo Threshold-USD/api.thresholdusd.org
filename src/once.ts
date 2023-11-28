@@ -1,47 +1,46 @@
 import fs from "fs";
 import path from "path";
 
-import { connectToLiquity } from "./connection.js";
-import { fetchLQTYCirculatingSupply } from "./fetchLQTYCirculatingSupply.js";
-import { fetchLUSDTotalSupply } from "./fetchLUSDTotalSupply.js";
-import { fetchLUSDCBBAMMStats } from "./fetchLUSDCBBAMMStats.js";
+import { connectToThresholdUsd } from "./connection";
+import { fetchTHUSDCirculatingSupply } from "./fetchTHUSDCirculatingSupply";
+import { fetchTHUSDTotalSupply } from "./fetchTHUSDTotalSupply";
 
 import {
   DEFAULT_NETWORK,
   DEFAULT_OUTPUT_DIR,
-  LQTY_CIRCULATING_SUPPLY_FILE,
-  LUSD_CB_BAMM_STATS_FILE,
-  LUSD_TOTAL_SUPPLY_FILE
-} from "./constants.js";
+  EXCLUDED_THUSD_HOLDERS,
+  THUSD_CIRCULATING_SUPPLY_FILE,
+  THUSD_TOTAL_SUPPLY_FILE
+} from "./constants";
 
-const panic = <T>(message: string): T => {
-  throw new Error(message);
-};
+import { Batched, WebSocketAugmented } from "@threshold-usd/providers";
+import { getNetwork } from "@ethersproject/networks";
+import { AlchemyProvider } from "@ethersproject/providers";
+
+const BatchedWebSocketAugmentedAlchemyProvider = Batched(WebSocketAugmented(AlchemyProvider));
 
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || undefined; // filter out empty string
-const transposeApiKey: string = process.env.TRANSPOSE_API_KEY || panic("missing TRANSPOSE_API_KEY");
 
 const outputDir = DEFAULT_OUTPUT_DIR;
-const lqtyCirculatingSupplyFile = path.join(outputDir, LQTY_CIRCULATING_SUPPLY_FILE);
-const lusdTotalSupplyFile = path.join(outputDir, LUSD_TOTAL_SUPPLY_FILE);
-const lusdCBBAMMStatsFile = path.join(outputDir, LUSD_CB_BAMM_STATS_FILE);
+const thusdCirculatingSupplyFile = path.join(outputDir, THUSD_CIRCULATING_SUPPLY_FILE);
+const thusdTotalSupplyFile = path.join(outputDir, THUSD_TOTAL_SUPPLY_FILE);
 
-connectToLiquity(DEFAULT_NETWORK, { alchemyApiKey })
-  .then(async liquity => {
-    const [lqtyCirculatingSupply, lusdTotalSupply, lusdCBBAMMStats] = await Promise.all([
-      fetchLQTYCirculatingSupply(liquity),
-      fetchLUSDTotalSupply(liquity),
-      fetchLUSDCBBAMMStats(transposeApiKey)
+const network = getNetwork(DEFAULT_NETWORK);
+const provider = new BatchedWebSocketAugmentedAlchemyProvider(network, alchemyApiKey);
+
+connectToThresholdUsd(provider, network.chainId)
+  .then(async thresholdUsd => {
+    const [thusdCirculatingSupply, thusdTotalSupply] = await Promise.all([
+      fetchTHUSDCirculatingSupply(thresholdUsd, EXCLUDED_THUSD_HOLDERS),
+      fetchTHUSDTotalSupply(thresholdUsd)
     ]);
 
     fs.mkdirSync(outputDir, { recursive: true });
-    fs.writeFileSync(lqtyCirculatingSupplyFile, `${lqtyCirculatingSupply}`);
-    fs.writeFileSync(lusdTotalSupplyFile, `${lusdTotalSupply}`);
-    fs.writeFileSync(lusdCBBAMMStatsFile, JSON.stringify(lusdCBBAMMStats));
+    fs.writeFileSync(thusdCirculatingSupplyFile, `${thusdCirculatingSupply}`);
+    fs.writeFileSync(thusdTotalSupplyFile, `${thusdTotalSupply}`);
 
-    console.log(`LQTY circulating supply: ${lqtyCirculatingSupply}`);
-    console.log(`LUSD total supply: ${lusdTotalSupply}`);
-    console.log("LUSD CB BAMM stats:", lusdCBBAMMStats);
+    console.log(`Latest THUSD circulating supply: ${thusdCirculatingSupply}`);
+    console.log(`Latest THUSD total supply: ${thusdTotalSupply}`);
   })
   .catch(error => {
     console.error(error);
