@@ -676,22 +676,22 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@threshold-usd/lib-base@0.0.0-semantic-release":
-  version "0.0.0-semantic-release"
-  resolved "https://registry.yarnpkg.com/@threshold-usd/lib-base/-/lib-base-0.0.0-semantic-release.tgz#12130e90959c9ff19870ca352717607c46b20ff5"
-  integrity sha512-Ee0cs/qI2lidVEKU9oDPjihDWEWV2DZuxXw+NcpmJi9DOu4gAlMiidw4cJ8yBoLZi5xQWQhq1FdhE6tiOP8VYw==
+"@threshold-usd/lib-base@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@threshold-usd/lib-base/-/lib-base-3.0.0.tgz#02ff39f65af658cf1f11e059f74a0561c5ffa577"
+  integrity sha512-ftkAf4D1hONGmJLhq5tbiYbUA1tvqlnqL4kv3XgAx6pn96miWIJ7yVFv74mU2rWe40CKjCcIg7I6t1g+1pHj+Q==
   dependencies:
     "@ethersproject/bignumber" "5.4.1"
 
-"@threshold-usd/lib-ethers@0.0.0-semantic-release":
-  version "0.0.0-semantic-release"
-  resolved "https://registry.yarnpkg.com/@threshold-usd/lib-ethers/-/lib-ethers-0.0.0-semantic-release.tgz#60a3147a8b0499248d02f3240ed596007e38debc"
-  integrity sha512-o8pA1N203C9UM5utN1MMymlKq+FNKnacwqQ3zrIrW4w6wleMlnijDbddjgAiQoann8lnpKMs2asIzeMBjn7RMA==
+"@threshold-usd/lib-ethers@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@threshold-usd/lib-ethers/-/lib-ethers-3.4.0.tgz#754800e569df2751ce609d0e3032222a12881e5c"
+  integrity sha512-nL0rlGX0GkFnVaO7vPFEGRWRCZdp0MRQpypbYi4b+wdfjsYNg5NwNX3OqQzNTXuVXDeOvlBFYoay65xKN4mmBQ==
 
-"@threshold-usd/providers@0.0.0-semantic-release":
-  version "0.0.0-semantic-release"
-  resolved "https://registry.yarnpkg.com/@threshold-usd/providers/-/providers-0.0.0-semantic-release.tgz#2928fd82577390574963165970918d36dfe28791"
-  integrity sha512-60i1z68f2vlV/KMpVG/P5bMBMxq5NNBZfWg1WNgxSbgd0bQ/nUUP0KLaPkKS2Ou3cmIMXEc1QMo4URLfJXF/wQ==
+"@threshold-usd/providers@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@threshold-usd/providers/-/providers-1.0.1.tgz#06143bc0e4d32a0a0c1e93b4a76058008b36cc6a"
+  integrity sha512-qVAG0sMA8buwxNH6n97fkaS0lQDpobUm1RqcifRbThpK4eCaUbFilvjbD+OHdzPvstnPHKiUFQR6WsRydFhVew==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"

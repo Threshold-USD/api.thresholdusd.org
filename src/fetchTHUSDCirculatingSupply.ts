@@ -1,17 +1,18 @@
 import { Decimal } from "@threshold-usd/lib-base";
 import { EthersLiquity as EthersThresholdUsd } from "@threshold-usd/lib-ethers";
 import { fetchTHUSDTotalSupply } from "./fetchTHUSDTotalSupply";
+import { queryDebtToPay } from "./queryDebtToPay";
 
 export const fetchTHUSDCirculatingSupply = async (
-  thresholdUsd: EthersThresholdUsd,
-  excludedAddresses: readonly string[],
+  thresholdUsdInstances: EthersThresholdUsd[],
   blockTag?: number
 ): Promise<Decimal> => {
-  const thusdTotalSupply = await fetchTHUSDTotalSupply(thresholdUsd)
-  return Promise.all(excludedAddresses.map(address => thresholdUsd.getTHUSDBalance(address, { blockTag }))).then(
-    lockedTHUSD => {
-      console.log("lockedTHUSD: ", lockedTHUSD)
-      return lockedTHUSD.reduce((a, b) => a.sub(b), thusdTotalSupply)
+  const thusdTotalSupply = await fetchTHUSDTotalSupply(thresholdUsdInstances[0])
+
+  return Promise.all(thresholdUsdInstances.map(instance => queryDebtToPay(instance, blockTag))).then(
+    debtsToPay => {
+      console.log("debtsToPay: ", debtsToPay)
+      return debtsToPay.reduce((acc, curr) => acc.sub(curr), thusdTotalSupply)
     }
   )
 }

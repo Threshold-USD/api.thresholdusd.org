@@ -1,10 +1,10 @@
 import { CollateralsVersionedDeployments, EthersLiquity, EthersLiquityConnection, EthersProvider, _connectByChainId, getCollateralsDeployments } from "@threshold-usd/lib-ethers";
 
 type SupportedNetworks = {
-  [key: string]: "homestead" | "goerli" | "sepolia";
+  [key: string]: "homestead" | "sepolia";
 };
 
-export const supportedNetworks: SupportedNetworks = { 1: "homestead", 5: "goerli", 11155111: "sepolia"};
+export const supportedNetworks: SupportedNetworks = { 1: "homestead", 11155111: "sepolia"};
 
 function iterateVersions(collaterals: CollateralsVersionedDeployments) {
   const result = [];
@@ -51,7 +51,14 @@ export async function connectToThresholdUsd(
       { useStore: "blockPolled" }
     )
   )
-  const ethersThresholdFromConnection = EthersLiquity._from(connectionsByChainId[0]);
-  ethersThresholdFromConnection.store.logging = true;
-  return ethersThresholdFromConnection
+
+  const thresholdUsdInstancesFromConnection = connectionsByChainId.map(
+      connection => {
+        const thresholdUsdFromConnection = EthersLiquity._from(connection)
+        thresholdUsdFromConnection.store.logging = true;
+        return thresholdUsdFromConnection
+      }
+    )
+
+  return thresholdUsdInstancesFromConnection
 }

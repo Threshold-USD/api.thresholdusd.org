@@ -1,7 +1,7 @@
 import WebSocket from "ws";
 import express from "express";
 
-import { EXCLUDED_THUSD_HOLDERS, DEFAULT_NETWORK, DEFAULT_SERVER_PORT } from "./constants";
+import { DEFAULT_NETWORK, DEFAULT_SERVER_PORT } from "./constants";
 import { connectToThresholdUsd } from "./connection";
 import { THUSDCirculatingSupplyPoller } from "./THUSDCirculatingSupplyPoller";
 import { getNetwork } from "@ethersproject/networks";
@@ -21,25 +21,30 @@ const alchemyApiKey = process.env.ALCHEMY_API_KEY
 const app = express();
 const network = getNetwork(DEFAULT_NETWORK);
 const provider = new BatchedWebSocketAugmentedAlchemyProvider(network, alchemyApiKey);
-const thresholdUsd = connectToThresholdUsd(provider, network.chainId)
 
-const circulatingSupplyPoller = new THUSDCirculatingSupplyPoller(thresholdUsd, EXCLUDED_THUSD_HOLDERS);
-const totalSupplyPoller = new THUSDTotalSupplyPoller(thresholdUsd);
+const main = async () => {
+  try {
+    const thresholdUsdInstances = await connectToThresholdUsd(provider, network.chainId);
 
-app.get("/circulatingSupply", (_req, res) => {
-  res.send(`${circulatingSupplyPoller.latestCirculatingSupply}`);
-});
+    const circulatingSupplyPoller = new THUSDCirculatingSupplyPoller(thresholdUsdInstances);
+    const totalSupplyPoller = new THUSDTotalSupplyPoller(thresholdUsdInstances[0]);
 
-app.get("/totalSupply", (_req, res) => {
-  res.send(`${totalSupplyPoller.totalSupply}`);
-});
+    app.get("/circulatingSupply", (_req, res) => {
+      res.send(`${circulatingSupplyPoller.latestCirculatingSupply}`);
+    });
 
-Promise.all([circulatingSupplyPoller.start(), totalSupplyPoller.start()])
-  .then(() => {
+    app.get("/totalSupply", (_req, res) => {
+      res.send(`${totalSupplyPoller.totalSupply}`);
+    });
+
+    await Promise.all([circulatingSupplyPoller.start(), totalSupplyPoller.start()]);
+
     app.listen(PORT, () => {
       console.log(`Listening on port ${PORT}...`);
     });
-  })
-  .catch(error => {
+  } catch (error) {
     console.error("Error starting pollers:", error);
-  });
+  }
+}
+
+main();

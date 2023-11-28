@@ -8,7 +8,6 @@ import { fetchTHUSDTotalSupply } from "./fetchTHUSDTotalSupply";
 import {
   DEFAULT_NETWORK,
   DEFAULT_OUTPUT_DIR,
-  EXCLUDED_THUSD_HOLDERS,
   THUSD_CIRCULATING_SUPPLY_FILE,
   THUSD_TOTAL_SUPPLY_FILE
 } from "./constants";
@@ -29,10 +28,10 @@ const network = getNetwork(DEFAULT_NETWORK);
 const provider = new BatchedWebSocketAugmentedAlchemyProvider(network, alchemyApiKey);
 
 connectToThresholdUsd(provider, network.chainId)
-  .then(async thresholdUsd => {
+  .then(async thresholdUsdInstances => {
     const [thusdCirculatingSupply, thusdTotalSupply] = await Promise.all([
-      fetchTHUSDCirculatingSupply(thresholdUsd, EXCLUDED_THUSD_HOLDERS),
-      fetchTHUSDTotalSupply(thresholdUsd)
+      fetchTHUSDCirculatingSupply(thresholdUsdInstances),
+      fetchTHUSDTotalSupply(thresholdUsdInstances[0])
     ]);
 
     fs.mkdirSync(outputDir, { recursive: true });

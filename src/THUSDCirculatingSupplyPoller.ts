@@ -4,30 +4,26 @@ import { EthersLiquity as EthersThresholdUsd } from "@threshold-usd/lib-ethers";
 import { fetchTHUSDCirculatingSupply } from "./fetchTHUSDCirculatingSupply";
 
 export class THUSDCirculatingSupplyPoller {
-  private readonly _thresholdUsd: EthersThresholdUsd | Promise<EthersThresholdUsd>;
-  private readonly _excludedAddresses: readonly string[];
+  private readonly _thresholdUsdInstances: EthersThresholdUsd[];
 
   private _latestCirculatingSupply?: Decimal;
   private _latestBlockTag?: number;
 
   constructor(
-    thresholdUsd: EthersThresholdUsd | Promise<EthersThresholdUsd>,
-    excludedAddresses: readonly string[]
+    thresholdUsdInstances: EthersThresholdUsd[],
   ) {
-    this._thresholdUsd = thresholdUsd;
-    this._excludedAddresses = excludedAddresses;
+    this._thresholdUsdInstances = thresholdUsdInstances;
   }
 
   async start(): Promise<void> {
-    const thresholdUsd = await this._thresholdUsd;
+    const thresholdUsdInstances = this._thresholdUsdInstances;
 
     this._latestCirculatingSupply = await fetchTHUSDCirculatingSupply(
-      thresholdUsd,
-      this._excludedAddresses
+      thresholdUsdInstances
     );
 
-    thresholdUsd.connection.provider.on("block", async (blockTag: number) => {
-      const supply = await fetchTHUSDCirculatingSupply(thresholdUsd, this._excludedAddresses, blockTag);
+    thresholdUsdInstances[0].connection.provider.on("block", async (blockTag: number) => {
+      const supply = await fetchTHUSDCirculatingSupply(thresholdUsdInstances, blockTag);
 
       if (this._latestBlockTag === undefined || blockTag > this._latestBlockTag) {
         this._latestCirculatingSupply = supply;
