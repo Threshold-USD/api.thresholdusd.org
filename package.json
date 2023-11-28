@@ -1,5 +1,5 @@
 {
-  "name": "@threshold-usd/lqty-circulating-supply",
+  "name": "@threshold-usd/thusd-circulating-supply",
   "version": "0.0.1",
   "private": true,
   "scripts": {
