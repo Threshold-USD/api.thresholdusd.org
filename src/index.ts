@@ -65,12 +65,13 @@ const main = async () => {
 
     await Promise.all([circulatingSupplyPoller.start(), totalSupplyPoller.start()]);
 
-    app.use((_req, res) => {
+    app.use((_req, res, next) => {
       const path = _req.path;
       if (/[^a-zA-Z0-9/_-]/.test(path)) {
         return res.status(403).send('403 Forbidden: Invalid path');
       }
       res.status(404).send('404 Not Found: The requested resource does not exist.');
+      next();
     });
 
     app.listen(PORT, () => {
