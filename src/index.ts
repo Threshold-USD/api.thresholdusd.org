@@ -1,6 +1,5 @@
 import WebSocket from "ws";
 import express from "express";
-import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 
@@ -23,8 +22,7 @@ const alchemyApiKey = process.env.ALCHEMY_API_KEY;
 const app = express();
 const network = getNetwork(DEFAULT_NETWORK);
 const provider = new BatchedWebSocketAugmentedAlchemyProvider(network, alchemyApiKey);
-app.use(helmet()); // Secure HTTP headers
-app.use(express.json()); // Body parsing
+app.use(express.json());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
