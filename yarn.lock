@@ -1330,6 +1330,11 @@ ethers@5.6.1:
     "@ethersproject/web" "5.6.0"
     "@ethersproject/wordlists" "5.6.0"
 
+express-rate-limit@^7.4.0:
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-7.4.0.tgz#5db412b8de83fa07ddb40f610c585ac8c1dab988"
+  integrity sha512-v1204w3cXu5gCDmAvgvzI6qjzZzoMWKnyVDk3ACgfswTQLYiGen+r8w0VnXnGMmzEN/g8fwIQ4JrFFd4ZP6ssg==
+
 express@4.17.3:
   version "4.17.3"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.3.tgz#f6c7302194a4fb54271b73a1fe7a06478c8f85a1"
@@ -1517,6 +1522,11 @@ hash.js@1.1.7, hash.js@^1.0.0, hash.js@^1.0.3:
   dependencies:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
+
+helmet@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/helmet/-/helmet-7.1.0.tgz#287279e00f8a3763d5dccbaf1e5ee39b8c3784ca"
+  integrity sha512-g+HZqgfbpXdCkme/Cd/mZkV0aV3BZZZSugecH03kl38m/Kmdx8jKjBikpDj2cr+Iynv4KpYEviojNdTJActJAg==
 
 hmac-drbg@^1.0.1:
   version "1.0.1"
