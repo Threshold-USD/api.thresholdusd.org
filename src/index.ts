@@ -1,5 +1,6 @@
 import WebSocket from "ws";
 import express from "express";
+import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 
@@ -22,7 +23,8 @@ const alchemyApiKey = process.env.ALCHEMY_API_KEY;
 const app = express();
 const network = getNetwork(DEFAULT_NETWORK);
 const provider = new BatchedWebSocketAugmentedAlchemyProvider(network, alchemyApiKey);
-app.use(express.json());
+app.use(helmet()); // Secure HTTP headers
+app.use(express.json()); // Body parsing
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -64,7 +66,7 @@ const main = async () => {
     await Promise.all([circulatingSupplyPoller.start(), totalSupplyPoller.start()]);
 
     app.use((_req, res) => {
-      const path = _req.path;
+      const path = req.path;
       if (/[^a-zA-Z0-9/_-]/.test(path)) {
         return res.status(403).send('403 Forbidden: Invalid path');
       }
