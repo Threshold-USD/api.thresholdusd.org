@@ -66,7 +66,7 @@ const main = async () => {
     await Promise.all([circulatingSupplyPoller.start(), totalSupplyPoller.start()]);
 
     app.use((_req, res) => {
-      const path = req.path;
+      const path = _req.path;
       if (/[^a-zA-Z0-9/_-]/.test(path)) {
         return res.status(403).send('403 Forbidden: Invalid path');
       }
